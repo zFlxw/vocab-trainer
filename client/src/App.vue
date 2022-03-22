@@ -1,5 +1,13 @@
 <template>
-  <HomeView />
+  <header>
+    <div>
+      <p class="user">Hello, <a class="username">Login</a>!</p>
+    </div>
+    <div>
+      <Settings class="icon" size="32"/>
+      <User class="icon" size="32"/>
+    </div>
+  </header>
   <router-view />
   <footer>
     <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
@@ -8,11 +16,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import HomeView from './views/HomeView.vue'
+import { User, Settings } from 'lucide-vue-next'
 
 export default defineComponent({
   name: 'App',
-  components: { HomeView }
+  components: { User, Settings }
 })
 </script>
 
@@ -29,7 +37,7 @@ $second_grey: #ced4da;
 }
 
 main {
-  min-height: calc(97vh - 3px);
+  min-height: calc(97vh - 92px);
   display: grid;
 }
 
@@ -37,6 +45,45 @@ main {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: 'Poppins', sans-serif;
+}
+
+header {
+  width: 99vw;
+  display: inline-flex;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  padding-right: 0;
+
+  .user {
+    padding-right: 2rem;
+    font-size: 1.25rem;
+    justify-content: left;
+
+    .username {
+      color: $main_blue;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .icon {
+    justify-content: right;
+    float: right;
+    color: $main_grey;
+    cursor: pointer;
+    transition: .3s;
+    margin-right: 1.5rem;
+
+    &:hover {
+      color: $main_blue;
+      transform: scale(125%);
+    }
+  }
 }
 
 footer {

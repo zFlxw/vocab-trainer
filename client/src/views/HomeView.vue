@@ -31,7 +31,6 @@ $second_grey: #ced4da;
 
 html {
   font-size: 18px;
-  height: 85vh;
 }
 
 body {
