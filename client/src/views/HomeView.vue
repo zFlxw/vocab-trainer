@@ -62,9 +62,9 @@ body {
 }
 
 .childs {
+  width: 75vw;
   padding-top: 12.5rem;
   font-size: 1.75rem;
-  width: 60rem;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;

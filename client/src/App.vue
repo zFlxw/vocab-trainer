@@ -1,26 +1,153 @@
 <template>
   <header>
     <div>
-      <p class="user">Hello, <a class="username">Login</a>!</p>
+      <p class="user">Hello, <a class="username" @click="showLogin=true">Login</a>!</p>
     </div>
     <div>
       <Settings class="icon" size="32"/>
-      <User class="icon" size="32"/>
+      <User @click="showLogin=true" class="icon" size="32"/>
     </div>
   </header>
   <router-view />
+  <!--- Login Modals -->
+  <Modal :modal_active="showLogin" @close-modal="closeModal">
+    <div class="modal-content">
+      <h1>Sign in</h1>
+      <p>No account yet? <a @click="switchLoginRegister">
+        Create one</a>.</p>
+      <form @submit.prevent="submitLogin">
+        <input name="email" class="field" id="email_login" type="email"
+               placeholder="E-Mail" v-model="email"/>
+
+        <input name="password" class="field" id="password_login" type="password"
+               placeholder="Password" v-model="password"/>
+
+        <input name="submit" class="submit" type="submit" value="Log in"/>
+      </form>
+      <div class="message" v-if="response">
+        <p>{{ response }}</p>
+      </div>
+    </div>
+  </Modal>
+  <Modal :modal_active="showRegister" @close-modal="closeModal">
+    <div class="modal-content">
+      <h1>Sign up</h1>
+      <p>Already have an account? <a @click="switchLoginRegister">Log in</a>.</p>
+      <form @submit.prevent="submitRegister">
+        <input name="username" class="field" id="username_register" type="text"
+               placeholder="Username" v-model="username"/>
+
+        <input name="email" class="field" id="email" type="email"
+               placeholder="E-Mail" v-model="email"/>
+
+        <input name="password" class="field" id="password" type="password"
+               placeholder="Password" v-model="password" />
+
+        <input name="submit" type="submit" class="submit" value="Register"/>
+      </form>
+
+      <div class="message" v-if="response">
+        <p>{{ response }}</p>
+      </div>
+    </div>
+  </Modal>
   <footer>
     <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
   </footer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { User, Settings } from 'lucide-vue-next'
+import Modal from './components/Modal.vue'
+import { post } from './api/methods'
 
 export default defineComponent({
   name: 'App',
-  components: { User, Settings }
+  components: { User, Settings, Modal },
+  setup () {
+    const showLogin = ref(false)
+    const showRegister = ref(false)
+    const hasToken = ref()
+
+    const response = ref('')
+    const username = ref('')
+    const email = ref('')
+    const password = ref('')
+    
+    const clearInputs = () => {
+      username.value = ''
+      email.value = ''
+      password.value = ''
+    }
+
+    const closeModal = () => {
+      clearInputs()
+      response.value = ''
+      showLogin.value = false
+      showRegister.value = false
+    }
+
+    const switchLoginRegister = () => {
+      showLogin.value = !showLogin.value
+      showRegister.value = !showRegister.value
+      clearInputs()
+      response.value = ''
+    }
+
+    const submitLogin = () => {
+      post('/login', { email: email.value, password: password.value }, false)
+        .then((res) => {
+          response.value = res.data.message;
+          localStorage.setItem('token', res.data.token);
+          closeModal();
+          hasToken.value = true;
+        }).catch((err) => {
+          response.value = err.response.data.message;
+          password.value = '';
+        });
+    };
+
+    const submitRegister = () => {
+      post('/register', {
+        username: username.value,
+        email: email.value,
+        password: password.value,
+      }, false)
+        .then((res) => {
+          console.log(res.data);
+          response.value = res.data.message;
+          localStorage.setItem('token', res.data.token);
+          closeModal();
+          hasToken.value = true;
+        }).catch((err) => {
+          response.value = err.response.data.message;
+          password.value = '';
+        });
+    }
+
+    const logout = () => {
+      if (hasToken.value) {
+        localStorage.removeItem('token');
+        hasToken.value = false;
+      }
+    }
+
+    return {
+      username,
+      email,
+      password,
+      response,
+      submitLogin,
+      submitRegister,
+      closeModal,
+      switchLoginRegister,
+      logout,
+      hasToken,
+      showLogin,
+      showRegister,
+    }
+  }
 })
 </script>
 
@@ -31,13 +158,15 @@ $main_grey: #495057;
 $second_grey: #ced4da;
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
 
 * {
   box-sizing: border-box;
 }
 
 main {
-  min-height: calc(97vh - 92px);
+  min-height: calc(96vh - 89px);
   display: grid;
 }
 
@@ -45,10 +174,11 @@ main {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: 'Poppins', sans-serif;
+  text-align: center;
 }
 
 header {
-  width: 99vw;
+  width: 100%;
   display: inline-flex;
   text-align: center;
   align-items: center;
@@ -86,8 +216,82 @@ header {
   }
 }
 
+/* Modal */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  a {
+    color: $main_blue;
+    transition: .3s;
+
+    &:hover {
+      opacity: .8;
+      cursor: pointer;
+    }
+  }
+
+  input {
+    margin-top: 30px;
+    font-family: 'Outfit', 'Poppins', sans-serif;
+    border: none;
+    border-bottom: 2px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.25rem;
+    height: 35px;
+    transition: .15s;
+
+    &::placeholder {
+      text-align: center;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $main_blue;
+    }
+
+    &[type="submit"] {
+      background-color: #adb5b3;
+      border: none;
+      margin-top: 30px;
+      display: inline-flex;
+      width: 40%;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .5s;
+
+      &:hover {
+        background-color: $main_blue;
+        color: #fff;
+        box-shadow: 0 0 23px -4px rgba(0,0,0,0.54);
+      }
+    }
+  }
+
+  h1, p {
+    font-family: 'Outfit', 'Poppins', sans-serif;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  p {
+    font-size: 1.5rem;    
+  }
+}
+
 footer {
-  width: 100%;
   height: 3vh;
   display: flex;
   align-items: center;
@@ -98,8 +302,13 @@ footer {
   transition: .15s;
 
   a {
+    display: inherit;
     text-decoration: none;
+    justify-content: flex-start;
     color: second_grey;
+    font-size: 1rem;
+    overflow: hidden;
+    padding: 0;
 
     &:visited, &:active {
       color: inherit;
