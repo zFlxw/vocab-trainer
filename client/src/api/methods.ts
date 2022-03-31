@@ -44,5 +44,5 @@ export function post(
     };
   }
 
-  return axios.post(`${baseUrl}/${route}`, body, config);
+  return axios.post(`${baseUrl}${route}`, body, config);
 }

@@ -1,9 +1,11 @@
 <template>
   <header>
     <div>
-      <p class="user">Hello, <a class="username" @click="showLogin=true">Login</a>!</p>
+      <p class="user" v-if="!hasToken">Hello, <a class="username" @click="showLogin=true">Login</a>!</p>
+      <p class="user" v-if="hasToken">Hello, <a class="username">{{ getUsername() }}</a>!</p>
     </div>
     <div>
+      <LogOut v-if="hasToken" @click="logout" class="icon" size="32"/>
       <Settings class="icon" size="32"/>
       <User @click="showLogin=true" class="icon" size="32"/>
     </div>
@@ -58,17 +60,19 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { User, Settings } from 'lucide-vue-next'
+import { User, Settings, LogOut } from 'lucide-vue-next'
 import Modal from './components/Modal.vue'
 import { post } from './api/methods'
+import { checkForToken, getUsername } from './api/jwt.util'
 
 export default defineComponent({
   name: 'App',
-  components: { User, Settings, Modal },
+  components: { User, Settings, LogOut, Modal },
   setup () {
     const showLogin = ref(false)
     const showRegister = ref(false)
-    const hasToken = ref()
+    const hasToken = ref(checkForToken())
+    const user = ref({ username: '', email: '', password: '' })
 
     const response = ref('')
     const username = ref('')
@@ -100,7 +104,10 @@ export default defineComponent({
         .then((res) => {
           response.value = res.data.message;
           localStorage.setItem('token', res.data.token);
-          closeModal();
+          username.value = res.data.username;
+          password.value = '';
+          showLogin.value = false;
+          showRegister.value = false;
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
@@ -118,7 +125,10 @@ export default defineComponent({
           console.log(res.data);
           response.value = res.data.message;
           localStorage.setItem('token', res.data.token);
-          closeModal();
+          user.value = res.data
+          clearInputs();
+          showLogin.value = false;
+          showRegister.value = false;
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
@@ -134,6 +144,7 @@ export default defineComponent({
     }
 
     return {
+      user,
       username,
       email,
       password,
@@ -146,6 +157,7 @@ export default defineComponent({
       hasToken,
       showLogin,
       showRegister,
+      getUsername
     }
   }
 })
