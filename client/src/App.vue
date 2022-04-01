@@ -7,7 +7,7 @@
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon" size="32"/>
       <Settings class="icon" size="32"/>
-      <User @click="showLogin=true" class="icon" size="32"/>
+      <User @click="switchToProfile()" class="icon" size="32"/>
     </div>
   </header>
   <router-view />
@@ -60,6 +60,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { User, Settings, LogOut } from 'lucide-vue-next'
 import Modal from './components/Modal.vue'
 import { post } from './api/methods'
@@ -69,6 +70,8 @@ export default defineComponent({
   name: 'App',
   components: { User, Settings, LogOut, Modal },
   setup () {
+    const router = useRouter()
+
     const showLogin = ref(false)
     const showRegister = ref(false)
     const hasToken = ref(checkForToken())
@@ -136,6 +139,15 @@ export default defineComponent({
         });
     }
 
+    const switchToProfile = () => {
+      if (!hasToken) {
+        showLogin.value = true
+        return;
+      }
+
+      router.push('/profile')
+    }
+
     const logout = () => {
       if (hasToken.value) {
         localStorage.removeItem('token');
@@ -152,6 +164,7 @@ export default defineComponent({
       submitLogin,
       submitRegister,
       closeModal,
+      switchToProfile,
       switchLoginRegister,
       logout,
       hasToken,
