@@ -2,16 +2,17 @@
   <header>
     <div>
       <p class="user" v-if="!hasToken">Hello, <a class="username" @click="showLogin=true">Login</a>!</p>
-      <p class="user" v-if="hasToken">Hello, <a class="username">{{ getUsername() }}</a>!</p>
+      <p class="user" v-if="hasToken">Hello, {{ getUsername() }}!</p>
     </div>
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon" size="32"/>
-      <Settings class="icon" size="32"/>
+      <Settings class="icon" size="32" @click="showSettings=true" />
       <User @click="switchToProfile()" class="icon" size="32"/>
+      <Home class="icon" size="32" @click="switchToHome()"/>
     </div>
   </header>
   <router-view />
-  <!--- Login Modals -->
+  <!--- Login Modal -->
   <Modal :modal_active="showLogin" @close-modal="closeModal">
     <div class="modal-content">
       <h1>Sign in</h1>
@@ -27,10 +28,11 @@
         <input name="submit" class="submit" type="submit" value="Log in"/>
       </form>
       <div class="message" v-if="response">
-        <p>{{ response }}</p>
+        <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
   </Modal>
+  <!--- Register Modal -->
   <Modal :modal_active="showRegister" @close-modal="closeModal">
     <div class="modal-content">
       <h1>Sign up</h1>
@@ -49,10 +51,66 @@
       </form>
 
       <div class="message" v-if="response">
-        <p>{{ response }}</p>
+        <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
   </Modal>
+  <!--- Settings Modal -->
+  <Modal :modal_active="showSettings" @close-modal="closeModal">
+    <div class="modal-content">
+      <h1>Settings</h1>
+      <p>Here you can tweak your settings how you want:</p>
+      <form @submit.prevent="submitSettings" class="settings-form">
+        <div class="options">
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="option">
+            <p>Option 1: </p>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <input name="submit" type="submit" class="submit" value="Save"/>
+      </form>
+    </div>
+  </Modal>
+  <!-- TODO -->
   <footer>
     <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
   </footer>
@@ -61,23 +119,25 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { User, Settings, LogOut } from 'lucide-vue-next'
+import { User, Settings, LogOut, Home } from 'lucide-vue-next'
 import Modal from './components/Modal.vue'
 import { post } from './api/methods'
 import { checkForToken, getUsername } from './api/jwt.util'
 
 export default defineComponent({
   name: 'App',
-  components: { User, Settings, LogOut, Modal },
+  components: { User, Settings, LogOut, Home, Modal },
   setup () {
     const router = useRouter()
 
     const showLogin = ref(false)
     const showRegister = ref(false)
+    const showSettings = ref(false)
     const hasToken = ref(checkForToken())
     const user = ref({ username: getUsername() , email: '', password: '' })
 
     const response = ref('')
+    const responseClass = ref('')
     const username = ref('')
     const email = ref('')
     const password = ref('')
@@ -93,6 +153,7 @@ export default defineComponent({
       response.value = ''
       showLogin.value = false
       showRegister.value = false
+      showSettings.value = false
     }
 
     const switchLoginRegister = () => {
@@ -106,6 +167,7 @@ export default defineComponent({
       post('/login', { email: email.value, password: password.value }, false)
         .then((res) => {
           response.value = res.data.message;
+          responseClass.value = res.status === 200 ? 'success' : 'error';
           localStorage.setItem('token', res.data.token);
           username.value = res.data.username;
           password.value = '';
@@ -114,6 +176,7 @@ export default defineComponent({
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
+          responseClass.value = 'error'
           password.value = '';
         });
     };
@@ -127,6 +190,7 @@ export default defineComponent({
         .then((res) => {
           console.log(res.data);
           response.value = res.data.message;
+          responseClass.value = res.status === 200 ? 'success' : 'error';
           localStorage.setItem('token', res.data.token);
           user.value = res.data
           clearInputs();
@@ -135,17 +199,26 @@ export default defineComponent({
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
+          responseClass.value = 'error'
           password.value = '';
         });
     }
 
+    const submitSettings = () => {
+
+    }
+
     const switchToProfile = () => {
-      if (!hasToken) {
+      if (!hasToken.value) {
         showLogin.value = true
         return;
       }
 
       router.push('/profile')
+    }
+
+    const switchToHome = () => {
+      router.push('/')
     }
 
     const logout = () => {
@@ -170,7 +243,11 @@ export default defineComponent({
       hasToken,
       showLogin,
       showRegister,
-      getUsername
+      switchToHome,
+      getUsername,
+      showSettings,
+      submitSettings,
+      responseClass
     }
   }
 })
@@ -180,6 +257,8 @@ export default defineComponent({
 $background: #f6f8fa;
 $main_blue: #0077b6;
 $main_grey: #495057;
+$main_green: #90be6d;
+$main_red: #f94144;
 $second_grey: #ced4da;
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -204,7 +283,8 @@ main {
 
 header {
   width: 100%;
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
   text-align: center;
   align-items: center;
   justify-content: space-between;
@@ -282,22 +362,24 @@ header {
     }
 
     &[type="submit"] {
-      background-color: #adb5b3;
-      border: none;
+      background-color: transparent;
+      border: 2.5px solid $main_grey;
+      color: $main_grey;
       margin-top: 30px;
       display: inline-flex;
-      width: 40%;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      border-radius: 10px;
+      width: 35%;
       cursor: pointer;
       transition: .5s;
+      border-radius: 50px;
+
+      &:diabled {
+        color: #eee;
+        border-color: #eee;
+      }
 
       &:hover {
-        background-color: $main_blue;
-        color: #fff;
-        box-shadow: 0 0 23px -4px rgba(0,0,0,0.54);
+        border-color: $main_blue;
+        color: $main_blue;
       }
     }
   }
@@ -320,7 +402,85 @@ header {
 
     p {
       font-size: 1.25rem;
-      color: $main_blue;
+    }
+
+    .success {
+      color: $main_green;
+    }
+
+    .error {
+      color: $main_red;
+    }
+  }
+
+  .settings-form {
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr; 
+    }
+
+    .option {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      p {
+        padding-right: 2rem;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+
+        input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 34px;
+
+        &::before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+          border-radius: 50%;
+        }
+      }
+
+      input {
+        &:checked + .slider {
+          background-color: $main_blue;
+        }
+
+        &:focus + .slider {
+          box-shadow: 0 0 1px #2196F3;
+        }
+
+        &:checked + .slider::before {
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
+        }
+      }
     }
   }
 }
