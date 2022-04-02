@@ -1,4 +1,5 @@
 import jwt_decode, { JwtPayload } from "jwt-decode";
+import * as api from "@/api/methods"
 
 export function checkForToken(): boolean {
   const payload = decodeToken()
