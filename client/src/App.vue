@@ -2,7 +2,7 @@
   <header>
     <div>
       <p class="user" v-if="!hasToken">Hello, <a class="username" @click="showLogin=true">Login</a>!</p>
-      <p class="user" v-if="hasToken">Hello, <a class="username">{{ getUsername() }}</a>!</p>
+      <p class="user" v-if="hasToken">Hello, {{ getUsername() }}!</p>
     </div>
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon" size="32"/>
@@ -28,7 +28,7 @@
         <input name="submit" class="submit" type="submit" value="Log in"/>
       </form>
       <div class="message" v-if="response">
-        <p>{{ response }}</p>
+        <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
   </Modal>
@@ -51,7 +51,7 @@
       </form>
 
       <div class="message" v-if="response">
-        <p>{{ response }}</p>
+        <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
   </Modal>
@@ -61,7 +61,7 @@
       <h1>Settings</h1>
       <p>Here you can tweak your settings how you want:</p>
       <form @submit.prevent="submitSettings" class="settings-form">
-        <div class="options"> 
+        <div class="options">
           <div class="option">
             <p>Option 1: </p>
             <label class="switch">
@@ -105,6 +105,8 @@
             </label>
           </div>
         </div>
+
+        <input name="submit" type="submit" class="submit" value="Save"/>
       </form>
     </div>
   </Modal>
@@ -135,6 +137,7 @@ export default defineComponent({
     const user = ref({ username: getUsername() , email: '', password: '' })
 
     const response = ref('')
+    const responseClass = ref('')
     const username = ref('')
     const email = ref('')
     const password = ref('')
@@ -164,6 +167,7 @@ export default defineComponent({
       post('/login', { email: email.value, password: password.value }, false)
         .then((res) => {
           response.value = res.data.message;
+          responseClass.value = res.status === 200 ? 'success' : 'error';
           localStorage.setItem('token', res.data.token);
           username.value = res.data.username;
           password.value = '';
@@ -172,6 +176,7 @@ export default defineComponent({
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
+          responseClass.value = 'error'
           password.value = '';
         });
     };
@@ -185,6 +190,7 @@ export default defineComponent({
         .then((res) => {
           console.log(res.data);
           response.value = res.data.message;
+          responseClass.value = res.status === 200 ? 'success' : 'error';
           localStorage.setItem('token', res.data.token);
           user.value = res.data
           clearInputs();
@@ -193,6 +199,7 @@ export default defineComponent({
           hasToken.value = true;
         }).catch((err) => {
           response.value = err.response.data.message;
+          responseClass.value = 'error'
           password.value = '';
         });
     }
@@ -202,7 +209,7 @@ export default defineComponent({
     }
 
     const switchToProfile = () => {
-      if (!hasToken) {
+      if (!hasToken.value) {
         showLogin.value = true
         return;
       }
@@ -239,7 +246,8 @@ export default defineComponent({
       switchToHome,
       getUsername,
       showSettings,
-      submitSettings
+      submitSettings,
+      responseClass
     }
   }
 })
@@ -249,6 +257,8 @@ export default defineComponent({
 $background: #f6f8fa;
 $main_blue: #0077b6;
 $main_grey: #495057;
+$main_green: #90be6d;
+$main_red: #f94144;
 $second_grey: #ced4da;
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -273,7 +283,8 @@ main {
 
 header {
   width: 100%;
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
   text-align: center;
   align-items: center;
   justify-content: space-between;
@@ -351,22 +362,24 @@ header {
     }
 
     &[type="submit"] {
-      background-color: #adb5b3;
-      border: none;
+      background-color: transparent;
+      border: 2.5px solid $main_grey;
+      color: $main_grey;
       margin-top: 30px;
       display: inline-flex;
-      width: 40%;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      border-radius: 10px;
+      width: 35%;
       cursor: pointer;
       transition: .5s;
+      border-radius: 50px;
+
+      &:diabled {
+        color: #eee;
+        border-color: #eee;
+      }
 
       &:hover {
-        background-color: $main_blue;
-        color: #fff;
-        box-shadow: 0 0 23px -4px rgba(0,0,0,0.54);
+        border-color: $main_blue;
+        color: $main_blue;
       }
     }
   }
@@ -389,7 +402,14 @@ header {
 
     p {
       font-size: 1.25rem;
-      color: $main_blue;
+    }
+
+    .success {
+      color: $main_green;
+    }
+
+    .error {
+      color: $main_red;
     }
   }
 
@@ -430,6 +450,7 @@ header {
         background-color: #ccc;
         -webkit-transition: .4s;
         transition: .4s;
+        border-radius: 34px;
 
         &::before {
           position: absolute;
@@ -441,6 +462,7 @@ header {
           background-color: white;
           -webkit-transition: .4s;
           transition: .4s;
+          border-radius: 50%;
         }
       }
 
