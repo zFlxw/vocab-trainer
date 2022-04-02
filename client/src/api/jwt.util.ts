@@ -7,10 +7,12 @@ export function checkForToken(): boolean {
     if (Number((payload as JwtPayload).exp) * 1000 <= Date.now()) {
       localStorage.removeItem("token");
       return false;
+    } else {
+      return true;
     }
   }
 
-  return true;
+  return false;
 }
 
 export function getUsername(): string {
