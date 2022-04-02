@@ -75,7 +75,7 @@ export default defineComponent({
     const showLogin = ref(false)
     const showRegister = ref(false)
     const hasToken = ref(checkForToken())
-    const user = ref({ username: '', email: '', password: '' })
+    const user = ref({ username: getUsername() , email: '', password: '' })
 
     const response = ref('')
     const username = ref('')
@@ -308,11 +308,20 @@ header {
   }
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
   p {
-    font-size: 1.5rem;    
+    font-size: 1.25rem;    
+  }
+
+  .message {
+    padding-top: 1rem;
+
+    p {
+      font-size: 1.25rem;
+      color: $main_blue;
+    }
   }
 }
 
