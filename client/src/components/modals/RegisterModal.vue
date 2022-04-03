@@ -1,13 +1,24 @@
 <template>
-  <Modal :modal_active="show" @close-modal="close(true)">
+  <Modal :modal_active="show" @close-modal="close">
     <div class="modal-content">
-      <h1>Sign in</h1>
-      <p>No account yet? <a @click="switchToRegister"> Create one</a>.</p>
+      <h1>Sign up</h1>
+      <p>
+        Already have an account? <a @click="switchToLogin">Log in</a>.
+      </p>
       <form @submit.prevent="submit">
+        <input
+          name="username"
+          class="field"
+          id="username_register"
+          type="text"
+          placeholder="Username"
+          v-model="username"
+        />
+
         <input
           name="email"
           class="field"
-          id="email_login"
+          id="email"
           type="email"
           placeholder="E-Mail"
           v-model="email"
@@ -16,14 +27,15 @@
         <input
           name="password"
           class="field"
-          id="password_login"
+          id="password"
           type="password"
           placeholder="Password"
           v-model="password"
         />
 
-        <input name="submit" class="submit" type="submit" value="Log in" />
+        <input name="submit" type="submit" class="submit" value="Register" />
       </form>
+
       <div class="message" v-if="response">
         <p :class="responseClass">{{ response }}</p>
       </div>
@@ -32,16 +44,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from "@vue/runtime-core";
-import { ref, Ref } from "vue";
+import { defineComponent } from "@vue/runtime-core";
+import { ref } from "vue";
 import { post } from "../../api/methods";
 import Modal from './Modal.vue';
 
 export default defineComponent({
-  name: "LoginModal",
+  name: "RegisterModal",
   props: ["show"],
-  components: { Modal},
-  setup(props, { emit }) {
+  components: { Modal },
+  setup (props, { emit }) {
+    const username = ref("");
     const email = ref("");
     const password = ref("");
 
@@ -49,6 +62,7 @@ export default defineComponent({
     const responseClass = ref("");
     
     const cleanup = () => {
+      username.value = "";
       email.value = "";
       password.value = "";
       response.value = "";
@@ -60,16 +74,24 @@ export default defineComponent({
         cleanup();
       }
 
-      emit("close-modal", "login");
+      emit("close-modal", "register");
     };
 
-    const switchToRegister = () => {
+    const switchToLogin = () => {
       cleanup();
-      emit("switch-modal", "register");
+      emit("switch-modal", "login");
     };
 
     const submit = () => {
-      post("/login", { email: email.value, password: password.value }, false)
+      post(
+        "/register",
+        {
+          username: username.value,
+          email: email.value,
+          password: password.value,
+        },
+        false
+      )
         .then((res) => {
           cleanup();
           response.value = res.data.message;
@@ -77,8 +99,9 @@ export default defineComponent({
 
           localStorage.setItem("token", res.data.token);
           
-          close(false);
-          // TODO: FIRE EVENT WITH USER
+          cleanup();
+
+          // TODO: FIRE EVENT WITH USER DATA
         })
         .catch((err) => {
           cleanup();
@@ -88,15 +111,16 @@ export default defineComponent({
     };
 
     return {
+      username,
       email,
       password,
-      close,
-      switchToRegister,
       response,
       responseClass,
-      submit
-    };
-  },
+      close,
+      submit,
+      switchToLogin
+    }
+  }
 });
 </script>
 

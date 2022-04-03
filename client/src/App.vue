@@ -48,9 +48,9 @@
       </div>
     </div>
   </Modal> -->
-  <LoginModal :show="showLogin" :email="email" :password="password" @close-modal="closeModals" />
+  <LoginModal :show="showLogin" @close-modal="closeModals" @switch-modal="switchModal" />
   <!--- Register Modal -->
-  <Modal :modal_active="showRegister" @close-modal="closeModal">
+  <!-- <Modal :modal_active="showRegister" @close-modal="closeModal">
     <div class="modal-content">
       <h1>Sign up</h1>
       <p>
@@ -91,7 +91,8 @@
         <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
-  </Modal>
+  </Modal> -->
+  <RegisterModal :show="showRegister" @closeModal="closeModals" @switch-modal="switchModal" />
   <!--- Settings Modal -->
   <Modal :modal_active="showSettings" @close-modal="closeModal">
     <div class="modal-content">
@@ -144,10 +145,11 @@ import { post } from "./api/methods";
 import { checkForToken, getUsername } from "./api/jwt.util";
 import Button from "./components/Button.vue";
 import LoginModal from "./components/modals/LoginModal.vue";
+import RegisterModal from "./components/modals/RegisterModal.vue";
 
 export default defineComponent({
   name: "App",
-  components: { User, Settings, LogOut, Home, Modal, Button, LoginModal },
+  components: { User, Settings, LogOut, Home, Modal, Button, LoginModal, RegisterModal },
   setup() {
     const router = useRouter();
 
@@ -178,7 +180,6 @@ export default defineComponent({
     };
 
     const closeModals = (modalName: string) => {
-      console.log(modalName);
       if (modalName === "login") {
         showLogin.value = false;
         hasToken.value = checkForToken();
@@ -188,10 +189,17 @@ export default defineComponent({
       } else if (modalName === "settings") {
         showSettings.value = false;
       }
+    };
 
-      console.log(showLogin.value);
-      console.log(showRegister.value);
-      console.log(showSettings.value);
+    const switchModal = (to: string) => {
+      closeModal();
+      if (to === "login") {
+        showLogin.value = true;
+      } else if (to === "register") {
+        showRegister.value = true;
+      } else if (to === "settings") {
+        showSettings.value = true;
+      }
     };
 
     const switchLoginRegister = () => {
@@ -302,7 +310,8 @@ export default defineComponent({
       showSettings,
       submitSettings,
       responseClass,
-      closeModals
+      closeModals,
+      switchModal
     };
   },
 });
