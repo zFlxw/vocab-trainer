@@ -1,6 +1,6 @@
 <template>
   <label class="switch">
-    <input type="checkbox" :checked="checked"/>
+    <input type="checkbox" v-model="checked" :checked="checked"/>
     <span class="slider"></span>
   </label>
 </template>
@@ -25,15 +25,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$background: #f6f8fa;
-$main_blue: #0077b6;
-$main_grey: #495057;
-$main_green: #90be6d;
-$main_red: #f94144;
-$second_grey: #ced4da;
-$second_green: #65C18C;
-$second_red: #ee6055;
-
 .switch {
   position: relative;
   display: inline-block;

@@ -286,15 +286,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-$background: #f6f8fa;
-$main_blue: #0077b6;
-$main_grey: #495057;
-$main_green: #90be6d;
-$main_red: #f94144;
-$second_grey: #ced4da;
-$second_green: #65C18C;
-$second_red: #ee6055;
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Dongle&display=swap");
