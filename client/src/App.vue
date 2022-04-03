@@ -4,7 +4,7 @@
       <p class="user" v-if="!hasToken">
         Hello, <a class="username" @click="showLogin = true">Login</a>!
       </p>
-      <p class="user" v-if="hasToken">Hello, {{ getUsername() }}!</p>
+      <p class="user" v-if="hasToken">Hello, <a class="username" href="/profile">{{ getUsername() }}</a>!</p>
     </div>
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
@@ -321,9 +321,14 @@ header {
     font-size: 1.25rem;
     justify-content: left;
 
-    .username {
+    .username{
       color: $main_blue;
       cursor: pointer;
+      text-decoration: none;
+
+      &:active, &:visited {
+        color: $main_blue;
+      }
 
       &:hover {
         text-decoration: underline;
@@ -471,6 +476,7 @@ footer {
   color: $second_grey;
   text-align: center;
   transition: 0.15s;
+  -webkit-transition: .15s;
 
   a {
     display: inherit;
@@ -483,7 +489,7 @@ footer {
 
     &:visited,
     &:active {
-      color: inherit;
+      color: $second_grey;
     }
   }
 
