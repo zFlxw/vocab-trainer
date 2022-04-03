@@ -1,0 +1,92 @@
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  a {
+    color: $main_blue;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  }
+
+  input {
+    margin-top: 30px;
+    font-family: "Outfit", "Poppins", sans-serif;
+    border: none;
+    border-bottom: 2px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.25rem;
+    height: 35px;
+    transition: 0.15s;
+
+    &::placeholder {
+      text-align: center;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $main_blue;
+    }
+
+    &[type="submit"] {
+      background-color: transparent;
+      border: 2.5px solid $main_grey;
+      color: $main_grey;
+      margin-top: 30px;
+      display: inline-flex;
+      width: 35%;
+      cursor: pointer;
+      transition: 0.5s;
+      border-radius: 50px;
+
+      &:diabled {
+        color: #eee;
+        border-color: #eee;
+      }
+
+      &:hover {
+        border-color: $main_blue;
+        color: $main_blue;
+      }
+    }
+  }
+
+  h1,
+  p {
+    font-family: "Outfit", "Poppins", sans-serif;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+  }
+
+  .message {
+    padding-top: 1rem;
+
+    p {
+      font-size: 1.25rem;
+    }
+
+    .success {
+      color: $main_green;
+    }
+
+    .error {
+      color: $main_red;
+    }
+  }
+}

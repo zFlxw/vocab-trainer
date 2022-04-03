@@ -4,7 +4,10 @@
       <p class="user" v-if="!hasToken">
         Hello, <a class="username" @click="showLogin = true">Login</a>!
       </p>
-      <p class="user" v-if="hasToken">Hello, <a class="username" href="/profile">{{ getUsername() }}</a>!</p>
+      <p class="user" v-if="hasToken">
+        Hello, <a class="username" href="/profile">{{ getUsername() }}</a
+        >!
+      </p>
     </div>
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
@@ -15,7 +18,7 @@
   </header>
   <router-view />
   <!--- Login Modal -->
-  <Modal :modal_active="showLogin" @close-modal="closeModal">
+  <!-- <Modal :modal_active="showLogin" @close-modal="closeModal">
     <div class="modal-content">
       <h1>Sign in</h1>
       <p>No account yet? <a @click="switchLoginRegister"> Create one</a>.</p>
@@ -44,7 +47,8 @@
         <p :class="responseClass">{{ response }}</p>
       </div>
     </div>
-  </Modal>
+  </Modal> -->
+  <LoginModal :show="showLogin" :email="email" :password="password" @close-modal="closeModals" />
   <!--- Register Modal -->
   <Modal :modal_active="showRegister" @close-modal="closeModal">
     <div class="modal-content">
@@ -97,7 +101,7 @@
         <div class="options">
           <div class="option">
             <p>Option 1:</p>
-            <Button isChecked="true" />
+            <Button :isChecked="true" />
           </div>
           <div class="option">
             <p>Option 1:</p>
@@ -105,7 +109,7 @@
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <Button isChecked="true" />
+            <Button :isChecked="true" />
           </div>
           <div class="option">
             <p>Option 1:</p>
@@ -132,17 +136,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { User, Settings, LogOut, Home } from "lucide-vue-next";
-import Modal from "./components/Modal.vue";
+import Modal from "./components/modals/Modal.vue";
 import { post } from "./api/methods";
 import { checkForToken, getUsername } from "./api/jwt.util";
-import Button from './components/Button.vue';
+import Button from "./components/Button.vue";
+import LoginModal from "./components/modals/LoginModal.vue";
 
 export default defineComponent({
   name: "App",
-  components: { User, Settings, LogOut, Home, Modal, Button },
+  components: { User, Settings, LogOut, Home, Modal, Button, LoginModal },
   setup() {
     const router = useRouter();
 
@@ -150,7 +155,7 @@ export default defineComponent({
     const showRegister = ref(false);
     const showSettings = ref(false);
     const hasToken = ref(checkForToken());
-    const user = ref({ username: getUsername(), email: "", password: "" });
+    const user = ref({ id: "", username: getUsername(), email: "" });
 
     const response = ref("");
     const responseClass = ref("");
@@ -170,6 +175,23 @@ export default defineComponent({
       showLogin.value = false;
       showRegister.value = false;
       showSettings.value = false;
+    };
+
+    const closeModals = (modalName: string) => {
+      console.log(modalName);
+      if (modalName === "login") {
+        showLogin.value = false;
+        hasToken.value = checkForToken();
+      } else if (modalName === "register") {
+        showRegister.value = false;
+        hasToken.value = checkForToken();
+      } else if (modalName === "settings") {
+        showSettings.value = false;
+      }
+
+      console.log(showLogin.value);
+      console.log(showRegister.value);
+      console.log(showSettings.value);
     };
 
     const switchLoginRegister = () => {
@@ -280,6 +302,7 @@ export default defineComponent({
       showSettings,
       submitSettings,
       responseClass,
+      closeModals
     };
   },
 });
@@ -321,12 +344,13 @@ header {
     font-size: 1.25rem;
     justify-content: left;
 
-    .username{
+    .username {
       color: $main_blue;
       cursor: pointer;
       text-decoration: none;
 
-      &:active, &:visited {
+      &:active,
+      &:visited {
         color: $main_blue;
       }
 
@@ -476,7 +500,7 @@ footer {
   color: $second_grey;
   text-align: center;
   transition: 0.15s;
-  -webkit-transition: .15s;
+  -webkit-transition: 0.15s;
 
   a {
     display: inherit;
