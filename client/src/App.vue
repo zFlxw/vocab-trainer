@@ -97,45 +97,27 @@
         <div class="options">
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button isChecked="true" />
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button />
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button isChecked="true" />
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button />
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button />
           </div>
           <div class="option">
             <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
+            <Button />
           </div>
         </div>
 
@@ -156,10 +138,11 @@ import { User, Settings, LogOut, Home } from "lucide-vue-next";
 import Modal from "./components/Modal.vue";
 import { post } from "./api/methods";
 import { checkForToken, getUsername } from "./api/jwt.util";
+import Button from './components/Button.vue';
 
 export default defineComponent({
   name: "App",
-  components: { User, Settings, LogOut, Home, Modal },
+  components: { User, Settings, LogOut, Home, Modal, Button },
   setup() {
     const router = useRouter();
 
@@ -480,63 +463,9 @@ header {
       display: flex;
       flex-direction: row;
       justify-content: center;
+
       p {
         padding-right: 2rem;
-      }
-
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-
-        input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: $second_red;
-        -webkit-transition: 0.3s;
-        transition: 0.3s;
-        border-radius: 34px;
-
-        &::before {
-          position: absolute;
-          content: "";
-          height: 26px;
-          width: 26px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          -webkit-transition: 0.4s;
-          transition: 0.4s;
-          border-radius: 50%;
-        }
-      }
-
-      input {
-        &:checked + .slider {
-          background-color: $second_green;
-        }
-
-        &:focus + .slider {
-          box-shadow: 0 0 1px #2196f3;
-        }
-
-        &:checked + .slider::before {
-          -webkit-transform: translateX(26px);
-          -ms-transform: translateX(26px);
-          transform: translateX(26px);
-        }
       }
     }
   }
