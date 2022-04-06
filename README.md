@@ -1,6 +1,6 @@
 # 📘 Vocab-Trainer
 
-![Preview](https://i.imgur.com/k0uO8hh.png)
+![Preview](https://i.imgur.com/6imjIrk.png)
 
 Have you ever felt like learning vocabs can be boring, especially if you do not want to just sit behind a book? Then **Vocab-Trainer** is the perfect solution for you. You can easily add groups of vocabs, called *Decks*, for instance if you want to keep multiple languages or topics sorted together. 
 

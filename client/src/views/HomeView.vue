@@ -2,10 +2,10 @@
   <main>
     <div class="centered">
       <div class="title">
-        <h1>Vokabeltrainer<p>.</p></h1>
+        <h1>Vocab-Trainer<p>.</p></h1>
       </div>
       <div class="childs">
-        <h2 class="link-anim">Lernen<p>.</p></h2> <h2 class="link-anim">Erstellen<p>.</p></h2>
+        <h2 class="link-anim">Learn<p>.</p></h2> <h2 class="link-anim">Create<p>.</p></h2>
       </div>
     </div>
   </main>
