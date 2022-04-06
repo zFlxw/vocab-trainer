@@ -13,11 +13,6 @@ export default {};
 </script>
 
 <style lang="scss" scoped>
-$background: #f6f8fa;
-$main_blue: #0077b6;
-$main_grey: #495057;
-$second_grey: #ced4da;
-
 .wrapper {
   display: flex;
   flex-direction: column;

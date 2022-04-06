@@ -18,11 +18,6 @@ export default {
 </script>
 
 <style lang="scss">
-$background: #f6f8fa;
-$main_blue: #0077b6;
-$main_grey: #495057;
-$second_grey: #ced4da;
-
 *, *::before, *::after {
   padding: 0;
   margin: 0;

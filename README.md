@@ -1,4 +1,7 @@
 # 📘 Vocab-Trainer
+
+![Preview](https://i.imgur.com/k0uO8hh.png)
+
 Have you ever felt like learning vocabs can be boring, especially if you do not want to just sit behind a book? Then **Vocab-Trainer** is the perfect solution for you. You can easily add groups of vocabs, called *Decks*, for instance if you want to keep multiple languages or topics sorted together. 
 
 But keep in mind, this is just a fun project of mine, and also kind of my first web development project ever. So the code might not be professional, please educate me about mistakes you found. :) 

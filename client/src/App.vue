@@ -4,7 +4,10 @@
       <p class="user" v-if="!hasToken">
         Hello, <a class="username" @click="showLogin = true">Login</a>!
       </p>
-      <p class="user" v-if="hasToken">Hello, {{ getUsername() }}!</p>
+      <p class="user" v-if="hasToken">
+        Hello, <a class="username" href="/profile">{{ getUsername() }}</a
+        >!
+      </p>
     </div>
     <div>
       <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
@@ -14,152 +17,52 @@
     </div>
   </header>
   <router-view />
-  <!--- Login Modal -->
-  <Modal :modal_active="showLogin" @close-modal="closeModal">
-    <div class="modal-content">
-      <h1>Sign in</h1>
-      <p>No account yet? <a @click="switchLoginRegister"> Create one</a>.</p>
-      <form @submit.prevent="submitLogin">
-        <input
-          name="email"
-          class="field"
-          id="email_login"
-          type="email"
-          placeholder="E-Mail"
-          v-model="email"
-        />
+  <LoginModal
+    :show="showLogin"
+    @close-modal="closeModal"
+    @switch-modal="switchModal"
+  />
 
-        <input
-          name="password"
-          class="field"
-          id="password_login"
-          type="password"
-          placeholder="Password"
-          v-model="password"
-        />
+  <RegisterModal
+    :show="showRegister"
+    @closeModal="closeModal"
+    @switch-modal="switchModal"
+  />
 
-        <input name="submit" class="submit" type="submit" value="Log in" />
-      </form>
-      <div class="message" v-if="response">
-        <p :class="responseClass">{{ response }}</p>
-      </div>
-    </div>
-  </Modal>
-  <!--- Register Modal -->
-  <Modal :modal_active="showRegister" @close-modal="closeModal">
-    <div class="modal-content">
-      <h1>Sign up</h1>
-      <p>
-        Already have an account? <a @click="switchLoginRegister">Log in</a>.
-      </p>
-      <form @submit.prevent="submitRegister">
-        <input
-          name="username"
-          class="field"
-          id="username_register"
-          type="text"
-          placeholder="Username"
-          v-model="username"
-        />
-
-        <input
-          name="email"
-          class="field"
-          id="email"
-          type="email"
-          placeholder="E-Mail"
-          v-model="email"
-        />
-
-        <input
-          name="password"
-          class="field"
-          id="password"
-          type="password"
-          placeholder="Password"
-          v-model="password"
-        />
-
-        <input name="submit" type="submit" class="submit" value="Register" />
-      </form>
-
-      <div class="message" v-if="response">
-        <p :class="responseClass">{{ response }}</p>
-      </div>
-    </div>
-  </Modal>
-  <!--- Settings Modal -->
-  <Modal :modal_active="showSettings" @close-modal="closeModal">
-    <div class="modal-content">
-      <h1>Settings</h1>
-      <p>Here you can tweak your settings how you want:</p>
-      <form @submit.prevent="submitSettings" class="settings-form">
-        <div class="options">
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="option">
-            <p>Option 1:</p>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <input name="submit" type="submit" class="submit" value="Save" />
-      </form>
-    </div>
-  </Modal>
-  <!-- TODO -->
+  <SettingsModal 
+    :show="showSettings"
+    @close-modal="closeModal"
+  />
   <footer>
     <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
   </footer>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { User, Settings, LogOut, Home } from "lucide-vue-next";
-import Modal from "./components/Modal.vue";
+import Modal from "./components/modals/Modal.vue";
 import { post } from "./api/methods";
 import { checkForToken, getUsername } from "./api/jwt.util";
+import Button from "./components/Button.vue";
+import LoginModal from "./components/modals/LoginModal.vue";
+import RegisterModal from "./components/modals/RegisterModal.vue";
+import SettingsModal from "./components/modals/SettingsModal.vue";
 
 export default defineComponent({
   name: "App",
-  components: { User, Settings, LogOut, Home, Modal },
+  components: {
+    User,
+    Settings,
+    LogOut,
+    Home,
+    Modal,
+    Button,
+    LoginModal,
+    RegisterModal,
+    SettingsModal
+  },
   setup() {
     const router = useRouter();
 
@@ -167,83 +70,35 @@ export default defineComponent({
     const showRegister = ref(false);
     const showSettings = ref(false);
     const hasToken = ref(checkForToken());
-    const user = ref({ username: getUsername(), email: "", password: "" });
 
-    const response = ref("");
-    const responseClass = ref("");
-    const username = ref("");
-    const email = ref("");
-    const password = ref("");
-
-    const clearInputs = () => {
-      username.value = "";
-      email.value = "";
-      password.value = "";
-    };
-
-    const closeModal = () => {
-      clearInputs();
-      response.value = "";
+    const closeModals = () => {
       showLogin.value = false;
       showRegister.value = false;
       showSettings.value = false;
     };
 
-    const switchLoginRegister = () => {
-      showLogin.value = !showLogin.value;
-      showRegister.value = !showRegister.value;
-      clearInputs();
-      response.value = "";
+    const closeModal = (modalName: string) => {
+      if (modalName === "login") {
+        showLogin.value = false;
+        hasToken.value = checkForToken();
+      } else if (modalName === "register") {
+        showRegister.value = false;
+        hasToken.value = checkForToken();
+      } else if (modalName === "settings") {
+        showSettings.value = false;
+      }
     };
 
-    const submitLogin = () => {
-      post("/login", { email: email.value, password: password.value }, false)
-        .then((res) => {
-          response.value = res.data.message;
-          responseClass.value = res.status === 200 ? "success" : "error";
-          localStorage.setItem("token", res.data.token);
-          username.value = res.data.username;
-          password.value = "";
-          showLogin.value = false;
-          showRegister.value = false;
-          hasToken.value = true;
-        })
-        .catch((err) => {
-          response.value = err.response.data.message;
-          responseClass.value = "error";
-          password.value = "";
-        });
+    const switchModal = (to: string) => {
+      closeModals();
+      if (to === "login") {
+        showLogin.value = true;
+      } else if (to === "register") {
+        showRegister.value = true;
+      } else if (to === "settings") {
+        showSettings.value = true;
+      }
     };
-
-    const submitRegister = () => {
-      post(
-        "/register",
-        {
-          username: username.value,
-          email: email.value,
-          password: password.value,
-        },
-        false
-      )
-        .then((res) => {
-          console.log(res.data);
-          response.value = res.data.message;
-          responseClass.value = res.status === 200 ? "success" : "error";
-          localStorage.setItem("token", res.data.token);
-          user.value = res.data;
-          clearInputs();
-          showLogin.value = false;
-          showRegister.value = false;
-          hasToken.value = true;
-        })
-        .catch((err) => {
-          response.value = err.response.data.message;
-          responseClass.value = "error";
-          password.value = "";
-        });
-    };
-
-    const submitSettings = () => {};
 
     const switchToProfile = () => {
       if (!hasToken.value) {
@@ -277,16 +132,8 @@ export default defineComponent({
     };
 
     return {
-      user,
-      username,
-      email,
-      password,
-      response,
-      submitLogin,
-      submitRegister,
       closeModal,
       switchToProfile,
-      switchLoginRegister,
       switchToSettings,
       logout,
       hasToken,
@@ -295,23 +142,13 @@ export default defineComponent({
       switchToHome,
       getUsername,
       showSettings,
-      submitSettings,
-      responseClass,
+      switchModal,
     };
   },
 });
 </script>
 
 <style lang="scss">
-$background: #f6f8fa;
-$main_blue: #0077b6;
-$main_grey: #495057;
-$main_green: #90be6d;
-$main_red: #f94144;
-$second_grey: #ced4da;
-$second_green: #65C18C;
-$second_red: #ee6055;
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Dongle&display=swap");
@@ -350,6 +187,12 @@ header {
     .username {
       color: $main_blue;
       cursor: pointer;
+      text-decoration: none;
+
+      &:active,
+      &:visited {
+        color: $main_blue;
+      }
 
       &:hover {
         text-decoration: underline;
@@ -480,63 +323,9 @@ header {
       display: flex;
       flex-direction: row;
       justify-content: center;
+
       p {
         padding-right: 2rem;
-      }
-
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-
-        input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: $second_red;
-        -webkit-transition: 0.3s;
-        transition: 0.3s;
-        border-radius: 34px;
-
-        &::before {
-          position: absolute;
-          content: "";
-          height: 26px;
-          width: 26px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          -webkit-transition: 0.4s;
-          transition: 0.4s;
-          border-radius: 50%;
-        }
-      }
-
-      input {
-        &:checked + .slider {
-          background-color: $second_green;
-        }
-
-        &:focus + .slider {
-          box-shadow: 0 0 1px #2196f3;
-        }
-
-        &:checked + .slider::before {
-          -webkit-transform: translateX(26px);
-          -ms-transform: translateX(26px);
-          transform: translateX(26px);
-        }
       }
     }
   }
@@ -550,7 +339,6 @@ footer {
   font-size: 1.25rem;
   color: $second_grey;
   text-align: center;
-  transition: 0.15s;
 
   a {
     display: inherit;
@@ -560,16 +348,17 @@ footer {
     font-size: 1rem;
     overflow: hidden;
     padding: 0;
+    transition: 0.3s;
 
     &:visited,
     &:active {
-      color: inherit;
+      color: $second_grey;
     }
-  }
 
-  &:hover {
-    cursor: pointer;
-    color: $main_grey;
+    &:hover {
+      cursor: pointer;
+      color: $main_grey;
+    }
   }
 }
 </style>
