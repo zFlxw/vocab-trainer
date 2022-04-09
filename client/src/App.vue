@@ -1,43 +1,74 @@
-<template v-if="!isLoading">
-  <header>
-    <div>
-      <p class="user" v-if="!hasToken">
-        Hello, <a class="username" @click="showLogin = true">Login</a>!
-      </p>
-      <p class="user" v-if="hasToken">
-        Hello, <a class="username" href="/profile">{{ user.username }}</a>!
-      </p>
-    </div>
-    <div>
-      <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
-      <Settings class="icon" size="32" @click="switchToSettings()" />
-      <User @click="switchToProfile()" class="icon" size="32" />
-      <Home class="icon" size="32" @click="switchToHome()" />
-    </div>
-  </header>
-  <router-view />
-  <LoginModal
-    :show="showLogin"
-    @close-modal="closeModal"
-    @switch-modal="switchModal"
-    @reload-user="reloadUser"
-  />
+<template>
+  <div class="loading" v-if="isLoading">
+    <svg
+      version="1.1"
+      id="loader-1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      width="40px"
+      height="40px"
+      viewBox="0 0 50 50"
+      style="enable-background: new 0 0 50 50"
+      xml:space="preserve"
+    >
+      <path
+        fill="currentColor"
+        d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z"
+      >
+        <animateTransform
+          attributeType="xml"
+          attributeName="transform"
+          type="rotate"
+          from="0 25 25"
+          to="360 25 25"
+          dur="0.6s"
+          repeatCount="indefinite"
+        />
+      </path>
+    </svg>
+    <p>Data loading. Please wait...</p>
+  </div>
+  <div class="wrapper" v-else>
+    <header>
+      <div>
+        <p class="user" v-if="!hasToken">
+          Hello, <a class="username" @click="showLogin = true">Login</a>!
+        </p>
+        <p class="user" v-if="hasToken">
+          Hello, <a class="username" href="/profile">{{ user.username }}</a
+          >!
+        </p>
+      </div>
+      <div>
+        <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
+        <Settings class="icon" size="32" @click="switchToSettings()" />
+        <User @click="switchToProfile()" class="icon" size="32" />
+        <Home class="icon" size="32" @click="switchToHome()" />
+      </div>
+    </header>
+    <router-view />
+    <LoginModal
+      :show="showLogin"
+      @close-modal="closeModal"
+      @switch-modal="switchModal"
+      @reload-user="reloadUser"
+    />
 
-  <RegisterModal
-    :show="showRegister"
-    @closeModal="closeModal"
-    @switch-modal="switchModal"
-    @reload-user="reloadUser"
-  />
+    <RegisterModal
+      :show="showRegister"
+      @closeModal="closeModal"
+      @switch-modal="switchModal"
+      @reload-user="reloadUser"
+    />
 
-  <SettingsModal 
-    :show="showSettings"
-    @close-modal="closeModal"
-  />
+    <SettingsModal :show="showSettings" @close-modal="closeModal" />
 
-  <footer>
-    <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
-  </footer>
+    <footer>
+      <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
+    </footer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -65,7 +96,7 @@ export default defineComponent({
     Button,
     LoginModal,
     RegisterModal,
-    SettingsModal
+    SettingsModal,
   },
   setup() {
     const router = useRouter();
@@ -75,16 +106,19 @@ export default defineComponent({
     const showLogin = ref(false);
     const showRegister = ref(false);
     const showSettings = ref(false);
+
     const hasToken = ref(checkForToken());
     const user = ref(usersStore.user);
 
     onBeforeMount(() => {
       if (hasToken.value) {
-        requestUser().then(u => {
+        requestUser().then((u) => {
           usersStore.setUser(u);
           user.value = u;
           isLoading.value = false;
         });
+      } else {
+        isLoading.value = false;
       }
     });
 
@@ -143,7 +177,7 @@ export default defineComponent({
 
     const reloadUser = (newUser: UserModel) => {
       user.value = newUser;
-    }
+    };
 
     const logout = () => {
       router.push("/");
@@ -168,6 +202,7 @@ export default defineComponent({
       switchModal,
       user,
       reloadUser,
+      isLoading,
     };
   },
 });
@@ -192,6 +227,26 @@ main {
   -moz-osx-font-smoothing: grayscale;
   font-family: "Poppins", sans-serif;
   text-align: center;
+}
+
+.loading {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: center;
+  flex-direction: column;
+
+  svg {
+    width: 4rem;
+    height: 4rem;
+    color: $main_blue;
+  }
+
+  p {
+    font-size: 1.5rem;
+  }
 }
 
 header {
@@ -388,10 +443,5 @@ footer {
 }
 </style>
 
-function useUserStore() {
-    throw new Error("Function not implemented.");
-}
-
-function requestUser(): any {
-    throw new Error("Function not implemented.");
-}
+function useUserStore() { throw new Error("Function not implemented."); }
+function requestUser(): any { throw new Error("Function not implemented."); }

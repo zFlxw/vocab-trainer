@@ -5,16 +5,28 @@
         <h1>Vocab-Trainer<p>.</p></h1>
       </div>
       <div class="childs">
-        <h2 class="link-anim">Learn<p>.</p></h2> <h2 class="link-anim">Create<p>.</p></h2>
+        <h2 class="link-anim"><a @click="switchToLearn()">Learn<p>.</p></a></h2> <h2 class="link-anim">Create<p>.</p></h2>
       </div>
     </div>
   </main>
 </template>
 
 <script>
-export default {
-  name: 'HomeView'
-}
+import { useRouter } from 'vue-router';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'HomeView',
+  setup() {
+    const router = useRouter();
+
+    const switchToLearn = () => {
+      router.push('/learn');
+    };
+    
+    return { switchToLearn };
+  }
+});
 </script>
 
 <style lang="scss">
@@ -34,6 +46,15 @@ body {
   h1 p, h2 p {
     color: $main_blue;
     display: inline-flex;
+  }
+}
+
+a {
+  color: $main_grey;
+  text-decoration: none;
+
+  &:visited, &:active {
+    color: inherit;
   }
 }
 

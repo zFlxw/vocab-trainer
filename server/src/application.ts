@@ -6,6 +6,7 @@ import { MetadataKeys } from './utils/metadata.keys';
 import { IRouter } from './utils/handlers.decorator';
 import cookieParser from "cookie-parser";
 import cors from 'cors';
+import history from 'connect-history-api-fallback';
 
 class Application {
     private readonly _instance: ExpressApp;
@@ -14,6 +15,7 @@ class Application {
         dotenv.config();
 
         this._instance = express();
+        this._instance.use(history());
         this._instance.use(cookieParser());
         this._instance.use(cors({ credentials: true}));
         this._instance.use(express.json());
