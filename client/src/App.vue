@@ -43,7 +43,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useUsersStore } from "./stores/stores";
+import { useUserStore } from "./stores/stores";
 import { User, Settings, LogOut, Home } from "lucide-vue-next";
 import { checkForToken } from "./api/jwt.util";
 import { requestUser } from "./api/userMethods";
@@ -69,7 +69,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const usersStore = useUsersStore();
+    const usersStore = useUserStore();
     const isLoading = ref(true);
 
     const showLogin = ref(false);

@@ -46,7 +46,7 @@ import { defineComponent } from "@vue/runtime-core";
 import { ref } from "vue";
 import { post } from "../../api/methods";
 import { User } from "../../models/User";
-import { useUsersStore } from "../../stores/stores";
+import { useUserStore } from "../../stores/stores";
 import Modal from "./Modal.vue";
 
 export default defineComponent({
@@ -96,18 +96,18 @@ export default defineComponent({
           cleanup();
           response.value = res.data.message;
           responseClass.value = res.status === 200 ? "success" : "error";
-
           localStorage.setItem("token", res.data.token);
+
           const { id, username, email } = res.data.user;
           const user = { id, username, email, token: res.data.token } as User;
-          useUsersStore().setUser(user);
 
+          useUserStore().setUser(user);
           emit("reload-user", user);
-
           close(false);
         })
         .catch((err) => {
           cleanup();
+
           response.value = err.response.data.message;
           responseClass.value = "error";
         });

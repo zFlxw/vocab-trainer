@@ -21,7 +21,12 @@ export function decodeToken(): Token | null {
     return null;
   }
 
-  return jwt_decode(token);
+  try {
+    return jwt_decode(token);
+  } catch (error) {
+    localStorage.removeItem("token");
+    return null;
+  }
 }
 
 interface Token {

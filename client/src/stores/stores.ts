@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { User } from "@/models/User";
 
-export const useUsersStore = defineStore("users", {
+export const useUserStore = defineStore("users", {
   state: () => ({
     user: {} as User,
   }),
   getters: {
-    getUser(state) {
+    getUser(state): User {
       return state.user;
     },
   },
