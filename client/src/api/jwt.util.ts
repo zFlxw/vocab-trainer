@@ -1,5 +1,4 @@
 import jwt_decode, { JwtPayload } from "jwt-decode";
-import * as api from "@/api/methods"
 
 export function checkForToken(): boolean {
   const payload = decodeToken()
@@ -16,28 +15,23 @@ export function checkForToken(): boolean {
   return false;
 }
 
-export function getUsername(): string {
-  const payload = decodeToken()
-
-  if (payload) {
-    return payload.username
-  }
-
-  return ""
-}
-
-function decodeToken(): Token | null {
+export function decodeToken(): Token | null {
   const token: string | null = localStorage.getItem("token");
   if (!token) {
     return null;
   }
 
-  return jwt_decode(token);
+  try {
+    return jwt_decode(token);
+  } catch (error) {
+    localStorage.removeItem("token");
+    return null;
+  }
 }
 
 interface Token {
+  id: number,
   username: string,
-  isAdmin: boolean,
   iat: number,
   exp: number
 }

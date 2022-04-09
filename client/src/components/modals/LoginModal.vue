@@ -35,19 +35,21 @@
 import { defineComponent, watch } from "@vue/runtime-core";
 import { ref, Ref } from "vue";
 import { post } from "../../api/methods";
-import Modal from './Modal.vue';
+import { User } from "../../models/User";
+import { useUserStore } from "../../stores/stores";
+import Modal from "./Modal.vue";
 
 export default defineComponent({
   name: "LoginModal",
   props: ["show"],
-  components: { Modal},
+  components: { Modal },
   setup(props, { emit }) {
     const email = ref("");
     const password = ref("");
 
     const response = ref("");
     const responseClass = ref("");
-    
+
     const cleanup = () => {
       email.value = "";
       password.value = "";
@@ -74,14 +76,18 @@ export default defineComponent({
           cleanup();
           response.value = res.data.message;
           responseClass.value = res.status === 200 ? "success" : "error";
-
           localStorage.setItem("token", res.data.token);
-          
+
+          const { id, username, email } = res.data.user;
+          const user = { id, username, email, token: res.data.token } as User;
+
+          useUserStore().setUser(user);
+          emit("reload-user", user);
           close(false);
-          // TODO: FIRE EVENT WITH USER
         })
         .catch((err) => {
           cleanup();
+          
           response.value = err.response.data.message;
           responseClass.value = "error";
         });
@@ -94,7 +100,7 @@ export default defineComponent({
       switchToRegister,
       response,
       responseClass,
-      submit
+      submit,
     };
   },
 });
