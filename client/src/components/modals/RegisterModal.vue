@@ -2,9 +2,7 @@
   <Modal :modal_active="show" @close-modal="close">
     <div class="modal-content">
       <h1>Sign up</h1>
-      <p>
-        Already have an account? <a @click="switchToLogin">Log in</a>.
-      </p>
+      <p>Already have an account? <a @click="switchToLogin">Log in</a>.</p>
       <form @submit.prevent="submit">
         <input
           name="username"
@@ -47,20 +45,22 @@
 import { defineComponent } from "@vue/runtime-core";
 import { ref } from "vue";
 import { post } from "../../api/methods";
-import Modal from './Modal.vue';
+import { User } from "../../models/User";
+import { useUsersStore } from "../../stores/stores";
+import Modal from "./Modal.vue";
 
 export default defineComponent({
   name: "RegisterModal",
   props: ["show"],
   components: { Modal },
-  setup (props, { emit }) {
+  setup(props, { emit }) {
     const username = ref("");
     const email = ref("");
     const password = ref("");
 
     const response = ref("");
     const responseClass = ref("");
-    
+
     const cleanup = () => {
       username.value = "";
       email.value = "";
@@ -98,10 +98,13 @@ export default defineComponent({
           responseClass.value = res.status === 200 ? "success" : "error";
 
           localStorage.setItem("token", res.data.token);
-          
-          cleanup();
+          const { id, username, email } = res.data.user;
+          const user = { id, username, email, token: res.data.token } as User;
+          useUsersStore().setUser(user);
 
-          // TODO: FIRE EVENT WITH USER DATA
+          emit("reload-user", user);
+
+          close(false);
         })
         .catch((err) => {
           cleanup();
@@ -118,9 +121,9 @@ export default defineComponent({
       responseClass,
       close,
       submit,
-      switchToLogin
-    }
-  }
+      switchToLogin,
+    };
+  },
 });
 </script>
 

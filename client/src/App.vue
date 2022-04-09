@@ -1,12 +1,11 @@
-<template>
+<template v-if="!isLoading">
   <header>
     <div>
       <p class="user" v-if="!hasToken">
         Hello, <a class="username" @click="showLogin = true">Login</a>!
       </p>
       <p class="user" v-if="hasToken">
-        Hello, <a class="username" href="/profile">{{ getUsername() }}</a
-        >!
+        Hello, <a class="username" href="/profile">{{ user.username }}</a>!
       </p>
     </div>
     <div>
@@ -21,30 +20,35 @@
     :show="showLogin"
     @close-modal="closeModal"
     @switch-modal="switchModal"
+    @reload-user="reloadUser"
   />
 
   <RegisterModal
     :show="showRegister"
     @closeModal="closeModal"
     @switch-modal="switchModal"
+    @reload-user="reloadUser"
   />
 
   <SettingsModal 
     :show="showSettings"
     @close-modal="closeModal"
   />
+
   <footer>
     <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
   </footer>
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from "vue";
+import { defineComponent, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useUsersStore } from "./stores/stores";
 import { User, Settings, LogOut, Home } from "lucide-vue-next";
+import { checkForToken } from "./api/jwt.util";
+import { requestUser } from "./api/userMethods";
+import { User as UserModel } from "./models/User";
 import Modal from "./components/modals/Modal.vue";
-import { post } from "./api/methods";
-import { checkForToken, getUsername } from "./api/jwt.util";
 import Button from "./components/Button.vue";
 import LoginModal from "./components/modals/LoginModal.vue";
 import RegisterModal from "./components/modals/RegisterModal.vue";
@@ -65,12 +69,26 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const usersStore = useUsersStore();
+    const isLoading = ref(true);
 
     const showLogin = ref(false);
     const showRegister = ref(false);
     const showSettings = ref(false);
     const hasToken = ref(checkForToken());
+    const user = ref(usersStore.user);
 
+    onBeforeMount(() => {
+      if (hasToken.value) {
+        requestUser().then(u => {
+          usersStore.setUser(u);
+          user.value = u;
+          isLoading.value = false;
+        });
+      }
+    });
+
+    // --- Modals ---
     const closeModals = () => {
       showLogin.value = false;
       showRegister.value = false;
@@ -100,6 +118,11 @@ export default defineComponent({
       }
     };
 
+    // --- Icons ---
+    const switchToHome = () => {
+      router.push("/");
+    };
+
     const switchToProfile = () => {
       if (!hasToken.value) {
         showLogin.value = true;
@@ -107,10 +130,6 @@ export default defineComponent({
       }
 
       router.push("/profile");
-    };
-
-    const switchToHome = () => {
-      router.push("/");
     };
 
     const switchToSettings = () => {
@@ -122,11 +141,16 @@ export default defineComponent({
       showSettings.value = true;
     };
 
+    const reloadUser = (newUser: UserModel) => {
+      user.value = newUser;
+    }
+
     const logout = () => {
       router.push("/");
 
       if (hasToken.value) {
         localStorage.removeItem("token");
+        usersStore.deleteUser();
         hasToken.value = false;
       }
     };
@@ -140,9 +164,10 @@ export default defineComponent({
       showLogin,
       showRegister,
       switchToHome,
-      getUsername,
       showSettings,
       switchModal,
+      user,
+      reloadUser,
     };
   },
 });
@@ -362,3 +387,11 @@ footer {
   }
 }
 </style>
+
+function useUserStore() {
+    throw new Error("Function not implemented.");
+}
+
+function requestUser(): any {
+    throw new Error("Function not implemented.");
+}

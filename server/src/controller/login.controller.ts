@@ -1,10 +1,10 @@
-import Controller from "../../utils/controller.decorator";
+import Controller from "../utils/controller.decorator";
 import {Request, Response} from "express";
-import {Post} from "../../utils/handlers.decorator";
-import {User} from "../../entity/User";
-import {Hashing} from "../../utils/hashing";
+import {Post} from "../utils/handlers.decorator";
+import {User} from "../entity/User";
+import {Hashing} from "../utils/hashing";
 import {getRepository} from "typeorm";
-import {signToken} from "../../utils/authentication";
+import {signToken} from "../utils/authentication";
 
 @Controller('/login')
 export default class LoginController {
@@ -32,12 +32,12 @@ export default class LoginController {
             return res.status(400).json({message: 'Invalid password.'});
         }
 
-        signToken({username: user.username, isAdmin: false}, (err, token) => {
+        signToken({ id: user.id, username: user.username }, (err, token) => {
             if (err !== null) {
                 res.status(500).json({ message: err.message, error: err });
             } else {
                 res.status(200).json({message: 'Login authorized.',
-                    user: {username: user.username, email: user.email}, token});
+                    user: { id: user.id, username: user.username, email: user.email }, token});
             }
         });
     }

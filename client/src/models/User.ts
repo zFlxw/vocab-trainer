@@ -17,4 +17,9 @@ export interface User {
    * The user's email.
    */
   email: string;
+
+  /**
+   * The user's token,
+   */
+  token: string;
 }

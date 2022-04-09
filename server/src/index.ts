@@ -1,5 +1,13 @@
 import RootController from "./controller/root.controller";
-import LoginController from "./controller/users/login.controller";
-import RegisterController from "./controller/users/register.controller";
+import LoginController from "./controller/login.controller";
+import RegisterController from "./controller/register.controller";
+import ValidateController from "./controller/auth/validate.controller"
+import UserController from "./controller/users/user.controller";
 
-export const controllers = [RootController, LoginController, RegisterController];
+export const controllers = [
+  RootController,
+  LoginController,
+  RegisterController,
+  ValidateController,
+  UserController,
+];
