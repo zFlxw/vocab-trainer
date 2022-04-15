@@ -26,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/learn",
     component: LearnEditView,
+    meta: { transition: "slide-in" },
     beforeEnter: (to, from, next) => {
       if (localStorage.getItem("token")) {
         next();
