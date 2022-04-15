@@ -25,8 +25,11 @@
         </div>
 
         <a @click="submitGet">Hehe, click me</a>
-        <Info class="info-item" size="26" @click="openInfoModal" />
-
+        <div class="bottom-items">
+          <Info class="info-item" size="26" @click="openInfoModal" />
+          <p class="counter-item">{{ decks.length }}/5</p>
+        </div>
+        
         <AddDeckModal
           :show="showAddDeckModal"
           @close-modal="close"
@@ -215,15 +218,25 @@ main {
     margin-right: 10px;
   }
 
-  .info-item {
-    margin-left: 1em;
-    margin-right: auto;
-    color: $main_grey;
-    cursor: pointer;
-    transition: 0.15s;
+  .bottom-items {
+    padding: 0 1em;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
 
-    &:hover {
-      opacity: 0.8;
+    .info-item {
+      color: $main_grey;
+      cursor: pointer;
+      transition: 0.15s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .counter-item {
+      color: $main_grey;
     }
   }
 }
