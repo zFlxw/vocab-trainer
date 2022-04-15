@@ -12,7 +12,7 @@
           v-model="name"
         />
 
-        <input name="submit" class="submit" type="submit" value="Log in" />
+        <input name="submit" class="submit" type="submit" value="Create" />
       </form>
       <div class="message" v-if="response">
         <p :class="responseClass">{{ response }}</p>
