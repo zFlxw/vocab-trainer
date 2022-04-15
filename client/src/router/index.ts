@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
       if (localStorage.getItem("token")) {
         next();
       } else {
-        next({ name: "Home" });
+        next({ name: "home" });
       }
     },
   },
