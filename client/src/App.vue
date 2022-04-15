@@ -64,10 +64,6 @@
     />
 
     <SettingsModal :show="showSettings" @close-modal="closeModal" />
-
-    <footer>
-      <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
-    </footer>
   </div>
 </template>
 
@@ -442,6 +438,3 @@ footer {
   }
 }
 </style>
-
-function useUserStore() { throw new Error("Function not implemented."); }
-function requestUser(): any { throw new Error("Function not implemented."); }

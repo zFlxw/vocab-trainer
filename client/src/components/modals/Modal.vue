@@ -66,7 +66,7 @@ export default defineComponent({
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  padding: 40px;
+  padding-top: 60px;
 }
 
 /* Scrollbar Stuff (currently webkit only, firefox later) */

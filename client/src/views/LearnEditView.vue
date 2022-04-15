@@ -6,19 +6,37 @@
           <h1>Your Decks:</h1>
           <hr />
           <ul class="decks-list">
-            <li class="deck-item bg"><ArrowRight class="select-item" size="26" />German</li>
+            <li class="deck-item" v-for="deck in decks">
+              <ArrowRight class="select-item" size="26" /> {{ deck.name }}
+            </li>
+            <li
+              class="placeholder-item"
+              v-if="decks.length < 5"
+              @click="openAddDeckModal"
+            >
+              <Plus class="placeholder-plus" size="26" /> Add Deck
+            </li>
+            <!-- <li class="deck-item"><ArrowRight class="select-item" size="26" />German</li>
             <li class="deck-item"><ArrowRight class="select-item" size="26" />English</li>
-            <li class="deck-item bg"><ArrowRight class="select-item" size="26" />French</li>
+            <li class="deck-item"><ArrowRight class="select-item" size="26" />French</li>
             <li class="deck-item"><ArrowRight class="select-item" size="26" />Italian</li>
-            <li class="deck-item bg"><ArrowRight class="select-item" size="26" />Greek</li>
+            <li class="deck-item"><ArrowRight class="select-item" size="26" />Greek</li> -->
           </ul>
         </div>
 
-        <PlusCircle class="icon" size="48" />
+        <a @click="submitGet">Hehe, click me</a>
+        <Info class="info-item" size="26" @click="openInfoModal" />
+
+        <AddDeckModal
+          :show="showAddDeckModal"
+          @close-modal="close"
+        />
+
+        <InfoModal :show="showInfoModal" @close-modal="close" />
       </div>
       <div class="content">
         <div class="placeholder">
-          <p>No Deck selected.</p>        
+          <p>No Deck selected.</p>
         </div>
       </div>
     </div>
@@ -26,17 +44,63 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
-import { PlusCircle, ArrowRight } from "lucide-vue-next";
+import { defineComponent, ref } from "@vue/runtime-core";
+import { PlusCircle, ArrowRight, Plus, Info } from "lucide-vue-next";
+import { get } from "../api/methods";
+import AddDeckModal from "../components/modals/learn_view/AddDeckModal.vue";
+import InfoModal from "../components/modals/learn_view/InfoModal.vue";
 
 export default defineComponent({
-  name: "LearnEdit", 
-  components: { PlusCircle, ArrowRight },
-  setup() {},
+  name: "LearnEdit",
+  components: { PlusCircle, Plus, ArrowRight, Info, AddDeckModal, InfoModal },
+  setup() {
+    const showAddDeckModal = ref(false);
+    const showInfoModal = ref(false);
+    const decks = ref([
+      { id: 0, name: "German" },
+      { id: 1, name: "English" },
+      { id: 2, name: "Italian" },
+      { id: 2, name: "Greek" },
+    ]);
+
+    const openAddDeckModal = () => {
+      showAddDeckModal.value = true;
+    };
+
+    const openInfoModal = () => {
+      showInfoModal.value = true;
+    };
+
+    const close = () => {
+      showAddDeckModal.value = false;
+      showInfoModal.value = false;
+    };
+
+    const submitGet = () => {
+      get("/decks", true).then((res) => {
+        console.log(res.data);
+      });
+    };
+
+    return {
+      showAddDeckModal,
+      showInfoModal,
+      openAddDeckModal,
+      openInfoModal,
+      close,
+      submitGet,
+      decks,
+    };
+  },
 });
 </script>
 
 <style lang="scss" scoped>
+main {
+  min-height: calc(100vh - 89px);
+  display: grid;
+}
+
 .learn-wrapper {
   float: left;
   display: flex;
@@ -44,8 +108,9 @@ export default defineComponent({
   padding: 1em;
   padding-left: 0;
   background-color: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 }
 
 .decks {
@@ -61,11 +126,11 @@ export default defineComponent({
   }
 
   h1 {
-    padding: 0 .5em;
+    padding: 0 0.5em;
   }
 
   hr {
-    margin: .5em auto;
+    margin: 0.5em auto;
     width: 50px;
     height: 3px;
     background: $main_blue;
@@ -74,8 +139,13 @@ export default defineComponent({
 
   .decks-list {
     padding-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    li {
+    .deck-item {
+      border-radius: 5px;
+      width: 90%;
       padding: 20px;
       font-size: 1.25rem;
       list-style: none;
@@ -83,9 +153,15 @@ export default defineComponent({
       display: flex;
       align-items: center;
       flex-direction: row;
-      transition: .3s;
+      transition: 0.3s;
       cursor: pointer;
-      border-bottom: 1px solid $main_grey;
+      margin-bottom: 0.5em;
+
+      .condition {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
       &:hover {
         box-shadow: inset 0 0 0 3px $main_blue;
@@ -94,6 +170,32 @@ export default defineComponent({
       &:hover > .select-item {
         opacity: 1;
         transform: translateX(0);
+      }
+    }
+
+    .placeholder-item {
+      background-color: transparent !important;
+      border-radius: 5px;
+      width: 90%;
+      padding: 20px;
+      font-size: 1.25rem;
+      color: #ccc;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      transition: 0.3s;
+      cursor: pointer;
+      margin-bottom: 0.5em;
+      border: 3px dashed #ddd;
+
+      .placeholder-plus {
+        margin-right: 0.5em;
+      }
+
+      &:hover {
+        color: #aaa;
+        border-color: #aaa;
       }
     }
 
@@ -109,18 +211,19 @@ export default defineComponent({
   .select-item {
     opacity: 0;
     transform: translateX(-50%);
-    transition: .3s ease-in-out;
+    transition: 0.3s ease-in-out;
     margin-right: 10px;
   }
 
-  .icon {
+  .info-item {
+    margin-left: 1em;
+    margin-right: auto;
     color: $main_grey;
     cursor: pointer;
-    margin-bottom: 50px;
-    transition: .15s;
+    transition: 0.15s;
 
     &:hover {
-      opacity: .8;
+      opacity: 0.8;
     }
   }
 }

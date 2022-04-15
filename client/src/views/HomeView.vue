@@ -9,6 +9,10 @@
       </div>
     </div>
   </main>
+
+  <footer>
+    <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
+  </footer>
 </template>
 
 <script>
