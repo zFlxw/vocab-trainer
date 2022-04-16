@@ -42,10 +42,10 @@
         </p>
       </div>
       <div>
-        <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
-        <Settings class="icon" size="32" @click="switchToSettings()" />
-        <User @click="switchToProfile()" class="icon" size="32" />
-        <Home class="icon" size="32" @click="switchToHome()" />
+        <LogOut v-if="hasToken" @click="logout" class="icon red" :size="32" />
+        <Settings class="icon" :size="32" @click="switchToSettings()" />
+        <User @click="switchToProfile()" class="icon" :size="32" />
+        <Home class="icon" :size="32" @click="switchToHome()" />
       </div>
     </header>
 

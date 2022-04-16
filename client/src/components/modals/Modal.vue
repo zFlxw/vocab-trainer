@@ -1,18 +1,18 @@
 <template>
-  <transition name="modal-animation">
+  <Transition name="modal-animation">
     <div v-show="modal_active" class="modal">
-      <transition name="modal-animation-inner">
+      <Transition name="modal-animation-inner">
         <div v-show="modal_active" class="modal-inner" @keydown.esc="close">
           <i class="close fas fa-times" @click="close" />
           <slot />
         </div>
-      </transition>
+      </Transition>
     </div>
-  </transition>
+  </Transition>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'Modal',
   props: ['modal_active'],

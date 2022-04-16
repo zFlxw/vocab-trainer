@@ -7,21 +7,21 @@
           <hr />
           <ul class="decks-list">
             <li class="deck-item" v-for="deck in decks">
-              <ArrowRight class="select-item" size="26" /> {{ deck.name }}
+              <ArrowRight class="select-item" :size="26" /> {{ deck.name }}
             </li>
             <li
               class="placeholder-item"
               v-if="decks.length < 5"
               @click="openAddDeckModal"
             >
-              <Plus class="placeholder-plus" size="26" /> Create Deck
+              <Plus class="placeholder-plus" :size="26" /> Create Deck
             </li>
           </ul>
         </div>
 
         <a @click="submitGet" class="debug-item">Hehe, click me (Debug)</a>
         <div class="bottom-items">
-          <Info class="info-item" size="26" @click="openInfoModal" />
+          <Info class="info-item" :size="26" @click="openInfoModal" />
           <p class="counter-item">{{ decks.length }}/5</p>
         </div>
         
