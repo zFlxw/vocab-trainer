@@ -15,7 +15,7 @@ export async function requestUser(): Promise<User> {
   }
 
   const id = Number(decodedToken.id);
-  const response = await get(`users/${id}`, true);
+  const response = await get(`/users/${id}`, true);
   const { username, email } = response.data;
 
   return { id, username, email, token };

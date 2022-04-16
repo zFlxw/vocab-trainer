@@ -46,6 +46,7 @@ export default class RegisterController {
           id: user.id,
           email: user.email,
           username: user.username,
+          decks: user.decks,
         };
         signToken({ id: user.id, username: user.username }, (error, token) => {
           if (error) {

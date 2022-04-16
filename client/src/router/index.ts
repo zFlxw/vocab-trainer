@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useUserStore } from "@/stores/stores";
-import hasToken from '@/App.vue';
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import ProfileView from "@/views/ProfileView.vue";
@@ -10,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: HomeView
   },
   {
     path: "/profile",
@@ -26,11 +24,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/learn",
     component: LearnEditView,
+    meta: { transition: "slide-in" },
     beforeEnter: (to, from, next) => {
       if (localStorage.getItem("token")) {
         next();
       } else {
-        next({ name: "Home" });
+        next({ name: "home" });
       }
     },
   },

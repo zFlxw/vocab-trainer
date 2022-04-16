@@ -21,7 +21,7 @@ export function get(
     };
   }
 
-  return axios.get(`${baseUrl}/${route}`, config);
+  return axios.get(`${baseUrl}${route}`, config);
 }
 
 /**

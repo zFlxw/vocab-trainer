@@ -42,13 +42,19 @@
         </p>
       </div>
       <div>
-        <LogOut v-if="hasToken" @click="logout" class="icon red" size="32" />
-        <Settings class="icon" size="32" @click="switchToSettings()" />
-        <User @click="switchToProfile()" class="icon" size="32" />
-        <Home class="icon" size="32" @click="switchToHome()" />
+        <LogOut v-if="hasToken" @click="logout" class="icon red" :size="32" />
+        <Settings class="icon" :size="32" @click="switchToSettings()" />
+        <User @click="switchToProfile()" class="icon" :size="32" />
+        <Home class="icon" :size="32" @click="switchToHome()" />
       </div>
     </header>
-    <router-view />
+
+    <router-view v-slot="{ Component, route }">
+      <Transition :name="route.meta.transition || ''">
+        <component :is="Component" />
+      </Transition>
+    </router-view>
+
     <LoginModal
       :show="showLogin"
       @close-modal="closeModal"
@@ -64,10 +70,6 @@
     />
 
     <SettingsModal :show="showSettings" @close-modal="closeModal" />
-
-    <footer>
-      <a href="https://github.com/zFlxw" target="_blank">&copy; 2022 by Flxw</a>
-    </footer>
   </div>
 </template>
 
@@ -84,6 +86,7 @@ import Button from "./components/Button.vue";
 import LoginModal from "./components/modals/LoginModal.vue";
 import RegisterModal from "./components/modals/RegisterModal.vue";
 import SettingsModal from "./components/modals/SettingsModal.vue";
+import LearnEditView from "./views/LearnEditView.vue";
 
 export default defineComponent({
   name: "App",
@@ -203,6 +206,7 @@ export default defineComponent({
       user,
       reloadUser,
       isLoading,
+      LearnEditView,
     };
   },
 });
@@ -228,6 +232,20 @@ main {
   font-family: "Poppins", sans-serif;
   text-align: center;
 }
+
+// ANIMATIONS 
+.slide-in-enter-active,
+.slide-in-leave-acitve {
+  transform: translateY(0);
+  transition: transform .3s ease;
+}
+
+.slide-in-enter-from,
+.slide-in-leave-to {
+  transform: translateY(100%);
+}
+
+// ---
 
 .loading {
   width: 100vw;
@@ -442,6 +460,3 @@ footer {
   }
 }
 </style>
-
-function useUserStore() { throw new Error("Function not implemented."); }
-function requestUser(): any { throw new Error("Function not implemented."); }

@@ -1,14 +1,14 @@
 <template>
-  <transition name="modal-animation">
+  <Transition name="modal-animation">
     <div v-show="modal_active" class="modal">
-      <transition name="modal-animation-inner">
-        <div v-show="modal_active" class="modal-inner">
+      <Transition name="modal-animation-inner">
+        <div v-show="modal_active" class="modal-inner" @keydown.esc="close">
           <i class="close fas fa-times" @click="close" />
           <slot />
         </div>
-      </transition>
+      </Transition>
     </div>
-  </transition>
+  </Transition>
 </template>
 
 <script lang="ts">
@@ -17,9 +17,11 @@ export default defineComponent({
   name: 'Modal',
   props: ['modal_active'],
   setup (props, { emit }) {
+
     const close = () => {
       emit('close-modal')
     }
+
     return { close }
   }
 })
@@ -66,7 +68,7 @@ export default defineComponent({
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  padding: 40px;
+  padding-top: 60px;
 }
 
 /* Scrollbar Stuff (currently webkit only, firefox later) */
