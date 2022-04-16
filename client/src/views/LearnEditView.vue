@@ -6,7 +6,7 @@
           <h1>Your Decks:</h1>
           <hr />
           <ul class="decks-list">
-            <li class="deck-item" v-for="deck in decks">
+            <li class="deck-item" v-for="deck in decks" @click="selectDeck(deck)">
               <ArrowRight class="select-item" :size="26" /> {{ deck.name }}
             </li>
             <li
@@ -33,8 +33,11 @@
         <InfoModal :show="showInfoModal" @close-modal="close" />
       </div>
       <div class="content">
-        <div class="placeholder">
+        <div class="placeholder" v-if="!currentDeck.id && currentDeck.id !== 0">
           <p>No Deck selected.</p>
+        </div>
+        <div v-else>
+          <p>Deck selected: {{ currentDeck.name }}</p>
         </div>
       </div>
     </div>
@@ -58,8 +61,10 @@ export default defineComponent({
       { id: 0, name: "German" },
       { id: 1, name: "English" },
       { id: 2, name: "Italian" },
-      { id: 2, name: "Greek" },
+      { id: 3, name: "Greek" },
     ]);
+
+    const currentDeck = ref({} as { id: number, name: string });
 
     const openAddDeckModal = () => {
       showAddDeckModal.value = true;
@@ -74,6 +79,10 @@ export default defineComponent({
       showInfoModal.value = false;
     };
 
+    const selectDeck = (deck: { id: number, name: string }) => {
+      currentDeck.value = deck;
+    };
+
     const submitGet = () => {
       get("/decks", true).then((res) => {
         console.log(res.data);
@@ -83,11 +92,13 @@ export default defineComponent({
     return {
       showAddDeckModal,
       showInfoModal,
+      decks,
+      currentDeck,
       openAddDeckModal,
       openInfoModal,
       close,
       submitGet,
-      decks,
+      selectDeck,
     };
   },
 });
