@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useUserStore } from "@/stores/stores";
-import hasToken from '@/App.vue';
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import ProfileView from "@/views/ProfileView.vue";

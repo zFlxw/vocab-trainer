@@ -14,17 +14,12 @@
               v-if="decks.length < 5"
               @click="openAddDeckModal"
             >
-              <Plus class="placeholder-plus" size="26" /> Add Deck
+              <Plus class="placeholder-plus" size="26" /> Create Deck
             </li>
-            <!-- <li class="deck-item"><ArrowRight class="select-item" size="26" />German</li>
-            <li class="deck-item"><ArrowRight class="select-item" size="26" />English</li>
-            <li class="deck-item"><ArrowRight class="select-item" size="26" />French</li>
-            <li class="deck-item"><ArrowRight class="select-item" size="26" />Italian</li>
-            <li class="deck-item"><ArrowRight class="select-item" size="26" />Greek</li> -->
           </ul>
         </div>
 
-        <a @click="submitGet">Hehe, click me</a>
+        <a @click="submitGet" class="debug-item">Hehe, click me (Debug)</a>
         <div class="bottom-items">
           <Info class="info-item" size="26" @click="openInfoModal" />
           <p class="counter-item">{{ decks.length }}/5</p>
@@ -141,6 +136,10 @@ main {
 
   .decks-inner {
     width: 100%;
+  }
+  
+  .debug-item {
+    cursor: url("@/assets/normal.cur"), auto;
   }
 
   h1 {

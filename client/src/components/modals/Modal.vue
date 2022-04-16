@@ -2,7 +2,7 @@
   <transition name="modal-animation">
     <div v-show="modal_active" class="modal">
       <transition name="modal-animation-inner">
-        <div v-show="modal_active" class="modal-inner">
+        <div v-show="modal_active" class="modal-inner" @keydown.esc="close">
           <i class="close fas fa-times" @click="close" />
           <slot />
         </div>
@@ -12,14 +12,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 export default defineComponent({
   name: 'Modal',
   props: ['modal_active'],
   setup (props, { emit }) {
+
     const close = () => {
       emit('close-modal')
     }
+
     return { close }
   }
 })
