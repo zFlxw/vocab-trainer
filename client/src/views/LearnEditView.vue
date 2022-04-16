@@ -33,10 +33,11 @@
         <InfoModal :show="showInfoModal" @close-modal="close" />
       </div>
       <div class="content">
-        <div class="placeholder" v-if="!currentDeck.id && currentDeck.id !== 0">
+        <div class="placeholder" v-if="!currentDeck.id && currentDeck.id !== 0 ">
           <p>No Deck selected.</p>
         </div>
         <div v-else>
+          <i class="close fas fa-times" @click="clearDeck" />
           <p>Deck selected: {{ currentDeck.name }}</p>
         </div>
       </div>
@@ -51,6 +52,11 @@ import { get } from "../api/methods";
 import AddDeckModal from "../components/modals/learn_view/AddDeckModal.vue";
 import InfoModal from "../components/modals/learn_view/InfoModal.vue";
 
+interface Deck {
+  id: number;
+  name: string;
+}
+
 export default defineComponent({
   name: "LearnEdit",
   components: { PlusCircle, Plus, ArrowRight, Info, AddDeckModal, InfoModal },
@@ -64,7 +70,7 @@ export default defineComponent({
       { id: 3, name: "Greek" },
     ]);
 
-    const currentDeck = ref({} as { id: number, name: string });
+    const currentDeck = ref({} as Deck);
 
     const openAddDeckModal = () => {
       showAddDeckModal.value = true;
@@ -79,8 +85,12 @@ export default defineComponent({
       showInfoModal.value = false;
     };
 
-    const selectDeck = (deck: { id: number, name: string }) => {
+    const selectDeck = (deck: Deck) => {
       currentDeck.value = deck;
+    };
+
+    const clearDeck = () => {
+      currentDeck.value = {} as Deck
     };
 
     const submitGet = () => {
@@ -99,6 +109,7 @@ export default defineComponent({
       close,
       submitGet,
       selectDeck,
+      clearDeck,
     };
   },
 });
