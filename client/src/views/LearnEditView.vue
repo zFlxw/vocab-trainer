@@ -173,6 +173,7 @@ main {
       transition: 0.3s;
       cursor: pointer;
       margin-bottom: 0.5em;
+      color: $main_grey;
 
       .condition {
         display: flex;
