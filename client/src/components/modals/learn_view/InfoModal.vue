@@ -3,12 +3,12 @@
     <div class="modal-content">
       <h1>Learn More<a>.</a></h1>
       <p>Hey there! In this section, the <span>real things</span> happen.</p>
-      <p>Here you can <span class="o">create</span> new decks, <span class="o">edit</span> existing ones, and <span class="o">learn</span> you vocabs! </p>
+      <p>Here you can <span class="o">create</span> new decks, <span class="o">edit</span> existing ones, and <span class="o">learn</span> your vocabs! </p>
       <p>I try my best to provide the <span>best experience</span> to you, however, there is <span class="r">one limitation:</span></p>
       <ul>
         <li>Max. Decks: <span class="r">5</span></li>
       </ul>
-      <p>To create a new Deck, just click on the <span class="i">Add Deck</span> area and <span class="o">fill out</span> the content in the pop up window</p>
+      <p>To create a new Deck, just click on the <span class="i">Add Deck</span> area and <span class="o">fill out</span> the content in the pop up window.</p>
       <p>If there is no <span class="i">Add Deck</span> button, you already have 5 existing Decks.</p>
       <p>In this case, please <span class="o">edit</span> or <span class="o">delete</span> one of your <span>existing Decks</span>.</p>
     </div>
