@@ -1,7 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 import { Deck } from "./Deck";
 
-@Entity()
+@Entity({ name: 'tbl_users' })
 export class User {
   
   @PrimaryGeneratedColumn()

@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { Post } from '../utils/handlers.decorator';
 import { User } from '../entity/User';
 import { Hashing } from '../utils/hashing';
-import { getRepository } from 'typeorm';
 import { signToken } from '../utils/authentication';
+import { dataSource } from '../server';
 
 @Controller('/login')
 export default class LoginController {
@@ -23,7 +23,7 @@ export default class LoginController {
       return res.status(400).json({ message: 'Missing Arguments.' });
     }
 
-    const user: User | null = await getRepository(User).findOne({
+    const user: User | null = await dataSource.getRepository(User).findOne({
       where: [{ email }, { username: email }],
     });
     if (user === null) {

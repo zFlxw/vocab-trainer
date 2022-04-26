@@ -1,24 +1,16 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { User } from "../../entity/User";
 import { authenticateToken, decodeToken } from "../../utils/authentication";
 import Controller from "../../utils/controller.decorator";
 import { Get, Post } from "../../utils/handlers.decorator";
+import { getUserByToken } from "../../utils/users";
 
 @Controller("/decks")
 export default class DeckController {
 
   @Get("/")
-  public async getDecks(req: Request, res: Response) {
+  public getDecks(req: Request, res: Response) {
     authenticateToken(req, res, async () => {
-      const token = req.headers.authorization?.split(' ')[1]!!;
-      const id = decodeToken(token)?.id;
-      if (!id) {
-        console.log(token, id);
-        return res.status(400).json({ message: "Invalid token" });
-      }
-
-      const user = await getRepository(User).findOne({ where: { id: Number(id) } });
+      const user = await getUserByToken(req.headers.authorization?.split(' ')[1]!!);
       if (user) {
         return res.status(200).json({ decks: user.decks });
       }
@@ -28,9 +20,14 @@ export default class DeckController {
   }
 
   @Post("/")
-  public async addDeck(req: Request, res: Response) {
-    authenticateToken(req, res, () => {
-      res.status(501).send("Not yet implemented");
+  public addDeck(req: Request, res: Response) {
+    authenticateToken(req, res, async () => {
+      const user = await getUserByToken(req.headers.authorization?.split(' ')[1]!!);
+      const { name } = req.body;
+      if (!(user && name)) {
+        return res.status(400).json({ message: "Missing name or invalid token." });
+      }
+
     });
   }
 }

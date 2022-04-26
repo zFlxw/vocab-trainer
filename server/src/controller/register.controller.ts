@@ -1,10 +1,10 @@
 import Controller from '../utils/controller.decorator';
 import { Request, Response } from 'express';
 import { Post } from '../utils/handlers.decorator';
-import { getRepository } from 'typeorm';
 import { User } from '../entity/User';
 import { Hashing } from '../utils/hashing';
 import { signToken } from '../utils/authentication';
+import { dataSource } from '../server';
 
 @Controller('/register')
 export default class RegisterController {
@@ -23,11 +23,11 @@ export default class RegisterController {
       return res.status(400).json({ message: 'Missing Arguments.' });
     }
 
-    if ((await getRepository(User).findOne({ where: { email } })) !== null) {
+    if ((await dataSource.getRepository(User).findOne({ where: { email } })) !== null) {
       return res.status(409).json({ message: 'E-Mail already exists.' });
     }
 
-    if ((await getRepository(User).findOne({ where: { username } })) !== null) {
+    if ((await dataSource.getRepository(User).findOne({ where: { username } })) !== null) {
       return res.status(409).json({ message: 'Username already exists.' });
     }
 
@@ -39,7 +39,8 @@ export default class RegisterController {
       Number(process.env.SALT_LENGTH!!)
     );
 
-    getRepository(User)
+    dataSource
+      .getRepository(User)
       .save(newUser)
       .then((user) => {
         const userPart = {

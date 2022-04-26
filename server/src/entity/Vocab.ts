@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({ name: 'tbl_vocabs' })
 export class Vocab {
 
   @PrimaryGeneratedColumn()

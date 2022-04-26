@@ -1,6 +1,4 @@
 import express, {Application as ExpressApp, Handler, NextFunction, Request, Response} from 'express';
-import * as dotenv from 'dotenv';
-
 import { controllers } from './index';
 import { MetadataKeys } from './utils/metadata.keys';
 import { IRouter } from './utils/handlers.decorator';
@@ -12,8 +10,6 @@ class Application {
     private readonly _instance: ExpressApp;
 
     constructor() {
-        dotenv.config();
-
         this._instance = express();
         this._instance.use(history());
         this._instance.use(cookieParser());

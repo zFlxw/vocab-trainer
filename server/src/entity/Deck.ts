@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Vocab } from "./Vocab";
 
-@Entity()
+@Entity({ name: 'tbl_decks' })
 export class Deck {
 
   @PrimaryGeneratedColumn()

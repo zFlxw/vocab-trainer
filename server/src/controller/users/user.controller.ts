@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
 import { User } from "../../entity/User";
+import { dataSource } from "../../server";
 import { authenticateToken, decodeToken } from "../../utils/authentication";
 import Controller from "../../utils/controller.decorator";
 import { Get } from "../../utils/handlers.decorator";
@@ -13,7 +13,7 @@ export default class UserController {
     authenticateToken(req, res, async () => {
       const { id } = req.params;
 
-      const user: User | null = await getRepository(User).findOne({ where: { id: Number(id) } });
+      const user: User | null = await dataSource.getRepository(User).findOne({ where: { id: Number(id) }});
       if (!user) {
         return res.status(404).json({ message: "User not found." });
       }
