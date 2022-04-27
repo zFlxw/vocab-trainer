@@ -15,11 +15,12 @@ export const dataSource = new DataSource({
   port: Number(process.env.DB_PORT) || 5432,
   synchronize: true,
   logging: false,
-  entities: [__dirname + "/entity/**/*.ts"],
+  entities: [__dirname + '/entity/**/*.ts'],
 });
 
-dataSource.initialize()
-  .then(() => console.log("Established connection to database."))
+dataSource
+  .initialize()
+  .then(() => console.log('Established connection to database.'))
   .catch(() => console.error('Failed to initialize database connection.'));
 
 const PORT = process.env.PORT || 3001;
@@ -28,4 +29,3 @@ const server = http.createServer(application.instance);
 server.listen(PORT, () => {
   console.log(`Backend started! Listening on port: ${PORT}`);
 });
-

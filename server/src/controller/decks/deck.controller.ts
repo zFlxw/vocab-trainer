@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { authenticateToken, decodeToken } from "../../utils/authentication";
+import { authenticateToken } from "../../utils/authentication";
 import Controller from "../../utils/controller.decorator";
 import { Get, Post } from "../../utils/handlers.decorator";
 import { getUserByToken } from "../../utils/users";
@@ -27,7 +27,8 @@ export default class DeckController {
       if (!(user && name)) {
         return res.status(400).json({ message: "Missing name or invalid token." });
       }
-
+      
+      return res.status(200).json({ message: 'OK.' })
     });
   }
 }

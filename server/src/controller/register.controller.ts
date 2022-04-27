@@ -23,12 +23,22 @@ export default class RegisterController {
       return res.status(400).json({ message: 'Missing Arguments.' });
     }
 
-    if ((await dataSource.getRepository(User).findOne({ where: { email } })) !== null) {
-      return res.status(409).json({ message: 'E-Mail already exists.' });
+    const usernameQuery = await dataSource.getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.username = LOWER(:username)", { username: username.toLowerCase() })
+      .getOne();
+    
+    const emailQuery = await dataSource.getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.email = LOWER(:email)', { email: email.toLowerCase(), })
+      .getOne();
+      
+    if (usernameQuery !== null) {
+      return res.status(409).json({ message: 'Username already exists.' });
     }
 
-    if ((await dataSource.getRepository(User).findOne({ where: { username } })) !== null) {
-      return res.status(409).json({ message: 'Username already exists.' });
+    if (emailQuery !== null) {
+      return res.status(409).json({ message: 'E-Mail already exists.' });
     }
 
     const newUser: User = new User();

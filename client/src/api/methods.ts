@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { Config } from "./config";
 
-const baseUrl = Config.baseUrl || "http://localhost:3002";
+const baseUrl = Config.baseUrl || "http://localhost:3001";
 
 /**
  * Provides a GET request to the api.

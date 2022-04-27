@@ -23,9 +23,11 @@ export default class LoginController {
       return res.status(400).json({ message: 'Missing Arguments.' });
     }
 
-    const user: User | null = await dataSource.getRepository(User).findOne({
-      where: [{ email }, { username: email }],
-    });
+    const user: User | null = await dataSource.getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.email = LOWER(:email)', { email: email.toLowerCase() })
+      .getOne();
+
     if (user === null) {
       return res.status(404).json({ message: 'User not found.' });
     }

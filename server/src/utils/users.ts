@@ -1,5 +1,5 @@
-import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { dataSource } from "../server";
 import { decodeToken } from "./authentication";
 
 export async function getUserByToken(token: string): Promise<User | null> {
@@ -12,7 +12,7 @@ export async function getUserByToken(token: string): Promise<User | null> {
 }
 
 export async function getUserById(id: number): Promise<User | null> {
-  const user = await getRepository(User).findOne({ where: { id: Number(id) } });
+  const user = await dataSource.getRepository(User).findOne({ where: { id: Number(id) } });
   if (user) {
     return user;
   }
